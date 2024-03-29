@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Tracker</title>
+</head>
+<body>
+    <h1>Welcome to the Fitness Tracker</h1>
+    <hr>
+    <div id="sign-in">
+        <h2>Sign in</h2>
+        <input type="text" id="signInEmail" placeholder="Enter Email" >
+        <br>
+        <input type="text" id="signInPassword" placeholder="Enter Password" >
+        <br>
+        <button onclick="accountSignin()">Log in</button>
+        <span id="missingFields1" style="color: red; display: none;">
+            Please fill all fields
+        </span>
+        <h2 id="successfulSignup1" style="color: lightgreen; display: none;">Successful Sign In!</h2>
+        <br>
+        <br>
+        <a href="signup.html" style="display: block;">
+            Create an account here
+        </a>
+    </div>
+    <script src="validateForm.js"></script>
+</body>
+</html>
