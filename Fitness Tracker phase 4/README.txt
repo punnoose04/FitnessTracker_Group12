@@ -6,7 +6,7 @@ and install mysql2 with the command "npm install mysql2" in the terminal.
 
 Please look at the schema.sql to create the same database with the same table with the same information.
 use the code in the schema inside of SQL to create the same databases used.
-PLEASE CHANGE THE .ENV FILE TO OWN SQL PASSWORD and USERNAME
+PLEASE CHANGE THE .ENV FILE TO OWN SQL PASSWORD. Everything else in the .env file should be fine
 
 The HTML and formValidation.js file is in folder views
 
