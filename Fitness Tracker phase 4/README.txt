@@ -10,7 +10,7 @@ PLEASE CHANGE THE .ENV FILE TO OWN SQL PASSWORD and USERNAME
 
 The HTML and formValidation.js file is in folder views
 
-Please create the express.js sever by writing "node script.js" in the terminal
+Please create the express.js sever by writing "node server.js" in the terminal
 and please go to 
 http://localhost:3000 in google chrome to see website because it is run on port 3000. 
 
