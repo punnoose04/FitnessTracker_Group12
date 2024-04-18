@@ -2,7 +2,7 @@ const express = require('express');
 const session = require('express-session');
 const mysql = require('mysql2/promise'); // Database connection
 const dotenv = require('dotenv'); // dotenc for database connection
-const { checkDatabase, addUser, emailExists, logWorkout } = require('./database.js');
+const { checkDatabase, addUser, emailExists, logWorkout, workoutExists, pool } = require('./database.js');
 
 dotenv.config(); 
 
@@ -58,25 +58,32 @@ app.post('/signup', async (req, res) => {
 
 app.post('/submit-workouts', async (req, res) => {
     const { date, workouts } = req.body;
-    const userId = req.session.userId; // Assuming session management is in place
+    const userId = req.session.userId; // Retrieved from session
 
     if (!userId) {
         return res.status(403).json({ message: 'User not authenticated' });
     }
 
     try {
-        const results = await Promise.all(workouts.map(workout =>
-            logWorkout(userId, date, workout.type, workout.weight, workout.sets, workout.reps)
-        ));
-        res.status(201).json({ message: 'Workouts logged successfully', details: results });
+        for (const workout of workouts) {
+            const exists = await workoutExists(userId, date, workout.type);
+            if (exists) {
+                return res.status(409).json({ message: `Workout already logged for ${workout.type} on this date` });
+            }
+
+            // Insert workout if it does not exist
+            await logWorkout(userId, date, workout.type, workout.weight, workout.sets, workout.reps);
+        }
+        res.status(201).json({ message: 'Workouts logged successfully' });
     } catch (error) {
         console.error('Failed to log workouts:', error);
         res.status(500).json({ message: 'Error logging workouts' });
     }
 });
 
+
 app.get('/workouts', async (req, res) => {
-    const userId = req.session.userId; // Again, assuming session management
+    const userId = req.session.userId; // Session management
     try {
         const [workouts] = await pool.query('SELECT * FROM workouts WHERE user_id = ?', [userId]);
         res.json(workouts);
