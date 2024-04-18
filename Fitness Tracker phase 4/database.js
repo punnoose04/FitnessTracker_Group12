@@ -71,6 +71,20 @@ async function logWorkout(userId, date, workoutType, weight, sets, reps) {
   }
 }
 
+async function workoutExists(userId, date, workoutType) {
+  const connection = await pool.getConnection();
+  try {
+      const sql = 'SELECT 1 FROM workouts WHERE user_id = ? AND date = ? AND workout_type = ? LIMIT 1';
+      const [results] = await connection.query(sql, [userId, date, workoutType]);
+      connection.release();
+      return results.length > 0;
+  } catch (error) {
+      connection.release();
+      console.error('Error checking for existing workout:', error);
+      throw error;
+  }
+}
+
 async function getUsers(pool) {
         // console.log("in getusers");
         try {
@@ -93,6 +107,6 @@ async function getUsers(pool) {
   })();
 
 module.exports = {
-    checkDatabase, addUser, emailExists, logWorkout
+    checkDatabase, addUser, emailExists, logWorkout, workoutExists, pool
 };
 
