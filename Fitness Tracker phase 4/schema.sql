@@ -15,3 +15,14 @@ VALUES
 INSERT INTO users (email, pass)
 VALUES
 ("test", "test");
+
+CREATE TABLE workouts (
+    workout_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    date DATE,
+    workout_type VARCHAR(255),
+    weight DECIMAL(5,2), -- Assuming weight might need decimal points
+    sets INT,
+    reps INT,
+    FOREIGN KEY (user_id) REFERENCES users(id) 
+);
