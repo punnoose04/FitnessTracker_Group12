@@ -4,7 +4,7 @@ please make sure you have sql installed on system, change the .env file to match
 install express.js using "npm install express" in the terminal after node.js is installed on your system,
 and install mysql2 with the command "npm install mysql2" in the terminal.
 
-Also, do "npm install express-session"
+Also, do "npm install express-session" and "npm install dotenv"
 
 Please look at the schema.sql to create the same database with the same table with the same information.
 use the code in the schema inside of SQL to create the same databases used.
