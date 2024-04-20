@@ -10,9 +10,17 @@
     <header>
         <h1>Fitness Tracker</h1>
     </header>
+
+    <div id="reminderPanel" class="reminder-panel">
+        <h3>Reminders</h3>
+        <ul id="reminderList"></ul>
+    </div>
+
     <nav>
         <a href="#log">Log Workout</a>
         <a href="#history">View History</a>
+        <a href="reminder.html">Set Reminder</a> 
+        <a href="#" onclick="signOut()">Sign Out</a>
     </nav>
     <div class="container" id="log">
         <h2>Log Your Workout</h2>
@@ -26,7 +34,7 @@
                 <input type="date" id="date" name="date" required>
             </div>
             <div id="workoutsContainer">
-                <!-- Workout entries will be added here dynamically -->
+                <!-- Dynamically add workouts -->
             </div>
             <button type="button" onclick="addWorkoutForm()">Add Workout</button>
             <button type="submit">Submit</button>
