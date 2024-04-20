@@ -85,6 +85,34 @@ async function workoutExists(userId, date, workoutType) {
   }
 }
 
+async function addReminder(userId, date, time, message) {
+  const connection = await pool.getConnection();
+  try {
+      const sql = 'INSERT INTO reminders (user_id, reminder_date, reminder_time, message) VALUES (?, ?, ?, ?)';
+      const [result] = await connection.query(sql, [userId, date, time, message]);
+      connection.release();
+      return result;
+  } catch (error) {
+      connection.release();
+      console.error('Error adding reminder:', error);
+      throw error;
+  }
+}
+
+async function getReminders(userId) {
+  const connection = await pool.getConnection();
+  try {
+      const sql = 'SELECT * FROM reminders WHERE user_id = ? ORDER BY reminder_date DESC, reminder_time DESC';
+      const [reminders] = await connection.query(sql, [userId]);
+      connection.release();
+      return reminders;
+  } catch (error) {
+      connection.release();
+      console.error('Error fetching reminders:', error);
+      throw error;
+  }
+}
+
 async function getUsers(pool) {
         // console.log("in getusers");
         try {
@@ -107,6 +135,6 @@ async function getUsers(pool) {
   })();
 
 module.exports = {
-    checkDatabase, addUser, emailExists, logWorkout, workoutExists, pool
+    checkDatabase, addUser, emailExists, logWorkout, workoutExists, pool, addReminder, getReminders
 };
 
