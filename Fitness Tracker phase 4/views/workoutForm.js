@@ -101,6 +101,21 @@ function submitWorkout(event) {
 
 }
 
+function signOut() {
+    fetch('/signout', { method: 'POST' }) // Assume POST method to handle session destruction on server
+    .then(response => {
+        if (response.ok) {
+            window.location.href = 'index.html'; // Redirect to sign-in page after successful sign-out
+        } else {
+            alert('Failed to sign out.');
+        }
+    })
+    .catch(error => {
+        console.error('Error signing out:', error);
+        alert('Error signing out.');
+    });
+}
+
 function loadWorkoutHistory() {
     fetch('/workouts')
     .then(response => response.json())
@@ -121,11 +136,16 @@ function loadWorkoutHistory() {
             if (!logEntry) {
                 logEntry = document.createElement('div');
                 logEntry.id = `log-${workout.date}`;
-                logEntry.innerHTML = `<button class="log-date">${formattedDate}</button><div class="log-details" style="display:none;"></div>`;
+                logEntry.innerHTML = `
+                    <button class="log-date">${formattedDate}</button>
+                    <div class="log-details" style="display:none;"></div>`;
                 logsContainer.appendChild(logEntry);
             }
             const details = logEntry.querySelector('.log-details');
-            details.innerHTML += `<p>Type: ${workout.workout_type}, Weight: ${workout.weight}, Sets: ${workout.sets}, Reps: ${workout.reps}</p>`;
+            details.innerHTML += `<p><strong>Type:</strong> ${workout.workout_type}, 
+                                    <strong>Weight:</strong> ${workout.weight}, 
+                                    <strong>Sets:</strong> ${workout.sets}, 
+                                    <strong>Reps:</strong> ${workout.reps}</p>`;
         });
 
         document.querySelectorAll('.log-date').forEach(button => {
@@ -147,3 +167,73 @@ function showWorkoutDetails(workout) {
     // Optionally implement this function to show detailed information or allow editing
     alert(`Showing details for workout: ${workout.workout_type} on ${workout.date}`);
 }
+
+function formatTime24To12(time24) {
+    const [hours, minutes] = time24.split(':');
+    const hoursInt = parseInt(hours, 10);
+    const suffix = hoursInt >= 12 ? 'PM' : 'AM';
+    const hours12 = ((hoursInt + 11) % 12 + 1); // Converts 0-23 hour format into 1-12 hour format
+    return `${hours12}:${minutes} ${suffix}`;
+}
+
+function loadReminders() {
+    fetch('/get-reminders')
+    .then(response => response.json())
+    .then(reminders => {
+        const reminderPanel = document.getElementById('reminderPanel');
+        const reminderList = document.getElementById('reminderList');
+        
+        // Clear existing reminders before appending new ones
+        reminderList.innerHTML = '';
+
+        if (reminders.length > 0) {
+            // Display each reminder with a dismiss button
+            reminders.forEach(reminder => {
+                const listItem = document.createElement('li');
+
+                // Format the date to a more readable form
+                const date = new Date(reminder.reminder_date);
+                const formattedDate = date.toLocaleDateString(undefined, {
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+
+                // Format time from 24-hour to 12-hour AM/PM format
+                const formattedTime = formatTime24To12(reminder.reminder_time);
+
+                listItem.innerHTML = `${formattedDate} at ${formattedTime} - ${reminder.message}`;
+                const dismissButton = document.createElement('button');
+                dismissButton.textContent = 'Dismiss';
+                dismissButton.onclick = function() { dismissReminder(reminder.id); };
+                listItem.appendChild(dismissButton);
+                reminderList.appendChild(listItem);
+            });
+            reminderPanel.style.display = 'block'; // Show the reminder panel if there are reminders
+        } else {
+            reminderPanel.style.display = 'none'; // Hide the reminder panel if there are no reminders
+        }
+    })
+    .catch(error => {
+        console.error('Error loading reminders:', error);
+        document.getElementById('reminderPanel').style.display = 'none'; // Hide if there's an error fetching reminders
+    });
+}
+
+function dismissReminder(reminderId) {
+    fetch(`/dismiss-reminder/${reminderId}`, {
+        method: 'DELETE'
+    })
+    .then(response => {
+        if (response.ok) {
+            loadReminders(); // Reload reminders to update the list after deletion
+        } else {
+            alert('Failed to dismiss reminder');
+        }
+    })
+    .catch(error => alert('Error dismissing reminder: ' + error));
+}
+
+
+document.addEventListener('DOMContentLoaded', loadReminders);
