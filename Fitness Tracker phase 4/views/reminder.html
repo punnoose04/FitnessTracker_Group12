@@ -11,20 +11,21 @@
     <div class="container">
         <div class="time-section">
             <label for="time">Time</label>
-            <input type="time" id="time" name="time">
+            <input type="time" id="time" name="time" required>
         </div>
         <div class="date-section">
             <label for="date">Date</label>
-            <input type="date" id="date" name="date">
+            <input type="date" id="date" name="date" required>
         </div>
+        <div class="reminder-message-section">
+            <label for="message">Reminder Message:</label>
+            <input type="text" id="message" name="message" placeholder="Enter your reminder message" required>
+        </div>
+       <div id="error-message" style="color: red; display: none;">Please fill all required fields.</div>
         <div class="reminder-section">
             <button onclick="setReminder()">Set Reminder</button>
         </div>
     </div>
-    <script>
-        function setReminder() {
-            alert('Reminder set for ' + document.getElementById('date').value + ' at ' + document.getElementById('time').value);
-        }
-    </script>
+    <script src="reminderForm.js"></script>
 </body>
 </html>
